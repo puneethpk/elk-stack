@@ -1,0 +1,41 @@
+version: '3'
+services:
+  elasticsearch:
+    image: puneethpk96/elastic-sg:v6.4.2
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - mynet
+    environment:
+      - discovery.type=single-node
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.4.2
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    networks:
+      - mynet
+    depends_on: 
+      - elasticsearch
+  logstash:
+    image: logstash_local
+    container_name: logstash
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5400:5400"
+    networks:
+      - mynet
+  tomcat:
+    image: tomcat_local
+    hostname: tomcat
+    container_name: tomcat
+    networks:
+      - mynet
+    ports:
+      - "8080:8080"
+networks:
+  mynet:
+    #external: yes  
